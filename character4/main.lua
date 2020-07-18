@@ -28,7 +28,7 @@ CHARACTER_HEIGHT = 20
 CHARACTER_MOVE_SPEED = 40
 JUMP_VELOCITY = -200
 
-GRAVITY = 7
+GRAVITY = 1
 
 -- camera scroll speed
 CAMERA_SCROLL_SPEED = 40
@@ -82,9 +82,9 @@ function love.load()
     -- amount by which we'll translate the scene to emulate a camera
     cameraScroll = 0
 
-    backgroundR = math.random(255)
-    backgroundG = math.random(255)
-    backgroundB = math.random(255)
+    backgroundR = math.random()
+    backgroundG = math.random()
+    backgroundB = math.random()
 
     for y = 1, mapHeight do
         table.insert(tiles, {})
@@ -98,7 +98,7 @@ function love.load()
     end
 
     love.graphics.setDefaultFilter('nearest', 'nearest')
-    love.window.setTitle('tiles0')
+    love.window.setTitle('character4')
 
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
@@ -169,7 +169,7 @@ function love.draw()
         -- fractional camera offsets with a virtual resolution will result in weird pixelation and artifacting
         -- as things are attempted to be drawn fractionally and then forced onto a small virtual canvas
         love.graphics.translate(-math.floor(cameraScroll), 0)
-        love.graphics.clear(backgroundR, backgroundG, backgroundB, 255)
+        love.graphics.clear(backgroundR, backgroundG, backgroundB, 1.0)
         
         for y = 1, mapHeight do
             for x = 1, mapWidth do

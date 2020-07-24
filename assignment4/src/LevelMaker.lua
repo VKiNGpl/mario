@@ -21,6 +21,7 @@ function LevelMaker.generate(width, height)
     local topper = true
     local tileset = math.random(20)
     local topperset = math.random(20)
+    local keyset = math.random(4)
 
     -- insert blank tables into tiles for later access
     for x = 1, height do
@@ -148,6 +149,67 @@ function LevelMaker.generate(width, height)
                                     table.insert(objects, gem)
                                 end
 
+                                obj.hit = true
+                            end
+
+                            gSounds['empty-block']:play()
+                        end
+                    }
+                )
+            -- generate key from selected keyset
+            elseif x == 6 then
+                table.insert(objects,
+
+                    -- lock block
+                    GameObject {
+                        texture = 'keys-locks',
+                        x = (x - 1) * TILE_SIZE,
+                        y = (blockHeight - 1) * TILE_SIZE,
+                        width = 16,
+                        height = 16,
+
+                        -- make it a random variant
+                        frame = keyset + 4,
+                        collidable = true,
+                        hit = false,
+                        solid = true,
+                        isLock = true,
+
+                        -- collision function takes itself
+                        onCollide = function(obj)
+
+                            -- if lock has not been hit:
+                            if not obj.hit then
+                            
+                                -- maintain reference so we can set it to nil
+                                local gem = GameObject {
+                                    texture = 'keys-locks',
+                                    x = (x - 1) * TILE_SIZE,
+                                    y = (blockHeight - 1) * TILE_SIZE - 4,
+                                    width = 16,
+                                    height = 16,
+                                    frame = keyset,
+                                    collidable = true,
+                                    consumable = true,
+                                    solid = false,
+                                    -- gem has its own function to add to the player's score
+                                    onConsume = function(player, object)
+                                        gSounds['pickup']:play()
+                                        for o, object in pairs(objects) do
+                                            if object.isLock then
+                                                table.remove( objects, o )
+                                            end
+                                        end
+                                    end
+                                }
+                                
+                                -- make the gem move up from the block and play a sound
+                                Timer.tween(0.1, {
+                                    [gem] = {y = (blockHeight - 2) * TILE_SIZE}
+                                })
+                                gSounds['powerup-reveal']:play()
+                                table.insert(objects, gem)
+                            
                                 obj.hit = true
                             end
 

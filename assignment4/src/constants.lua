@@ -53,6 +53,8 @@ PLAYER_WALK_SPEED = 60
 -- player jumping velocity
 PLAYER_JUMP_VELOCITY = -150
 
+-- gravity value
+GRAVITY = 1
 -- snail movement speed
 SNAIL_MOVE_SPEED = 10
 

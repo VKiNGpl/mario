@@ -16,10 +16,10 @@ function PlayState:init()
     self.backgroundX = 0
 
     self.gravityOn = true
-    self.gravityAmount = 1
+    self.gravityAmount = GRAVITY
 
     self.player = Player({
-        x = 0, y = 0,
+        x = self:findGround(), y = 0,
         width = 16, height = 20,
         texture = 'green-alien',
         stateMachine = StateMachine {
@@ -135,4 +135,22 @@ function PlayState:spawnEnemies()
             end
         end
     end
+end
+
+function PlayState:findGround()
+    for x = 1, self.tileMap.width do
+
+        -- flag for whether there's ground on this column of the level
+        local groundFound = false
+
+        for y = 1, self.tileMap.height do
+            if not groundFound then
+                if self.tileMap.tiles[y][x].id == TILE_ID_GROUND then
+                    return (x - 1) * TILE_SIZE
+                end
+            end
+        end
+    end
+
+    return 7
 end

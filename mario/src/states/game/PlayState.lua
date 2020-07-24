@@ -16,7 +16,7 @@ function PlayState:init()
     self.backgroundX = 0
 
     self.gravityOn = true
-    self.gravityAmount = 6
+    self.gravityAmount = 1
 
     self.player = Player({
         x = 0, y = 0,
@@ -75,9 +75,9 @@ function PlayState:render()
     
     -- render score
     love.graphics.setFont(gFonts['medium'])
-    love.graphics.setColor(0, 0, 0, 255)
+    love.graphics.setColor(0.0, 0.0, 0.0, 1.0)
     love.graphics.print(tostring(self.player.score), 5, 5)
-    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
     love.graphics.print(tostring(self.player.score), 4, 4)
 end
 

@@ -16,9 +16,11 @@ function LevelMaker.generate(width, height)
     local objects = {}
 
     local tileID = TILE_ID_GROUND
+    local flagSpot = 0
     
     -- whether we should draw our tiles with toppers
     local topper = true
+    local lockGenerated = false
     local tileset = math.random(20)
     local topperset = math.random(20)
     local keyset = math.random(4)
@@ -48,6 +50,7 @@ function LevelMaker.generate(width, height)
             tileID = TILE_ID_GROUND
 
             local blockHeight = 4
+            local hasBlock = false
 
             for y = 7, height do
                 table.insert(tiles[y],
@@ -92,6 +95,7 @@ function LevelMaker.generate(width, height)
                         collidable = false
                     }
                 )
+                hasBlock = true
             end
 
             -- chance to spawn a block
@@ -156,8 +160,9 @@ function LevelMaker.generate(width, height)
                         end
                     }
                 )
-            -- generate key from selected keyset
-            elseif x == 6 then
+                hasBlock = true
+            -- generate lock from selected keyset
+            elseif x > width / 2 and not lockGenerated then
                 table.insert(objects,
 
                     -- lock block
@@ -201,6 +206,7 @@ function LevelMaker.generate(width, height)
                                             end
                                         end
                                     end
+                                    
                                 }
                                 
                                 -- make the gem move up from the block and play a sound
@@ -217,6 +223,11 @@ function LevelMaker.generate(width, height)
                         end
                     }
                 )
+                hasBlock = true
+                lockGenerated = true
+            end
+            if blockHeight == 4 and not hasBlock then
+                flagSpot = x
             end
         end
     end
@@ -224,5 +235,5 @@ function LevelMaker.generate(width, height)
     local map = TileMap(width, height)
     map.tiles = tiles
     
-    return GameLevel(entities, objects, map)
+    return GameLevel(entities, objects, map, flagSpot)
 end

@@ -14,6 +14,7 @@ function PlayState:init()
     self.tileMap = self.level.tileMap
     self.background = math.random(3)
     self.backgroundX = 0
+    self.flagPresent = false
 
     self.gravityOn = true
     self.gravityAmount = GRAVITY
@@ -55,6 +56,7 @@ function PlayState:update(dt)
     end
 
     self:updateCamera()
+    self:spawnFlag()
 end
 
 function PlayState:render()
@@ -153,4 +155,26 @@ function PlayState:findGround()
     end
 
     return 7
+end
+
+function PlayState:spawnFlag()
+    if not self.flagPresent then
+        for o = 1, #self.level.objects do
+            if self.level.objects[o].isLock == true then
+                return
+            end
+        end
+
+        flagPostBase = GameObject {
+            x = self.level.flagSpot * TILE_SIZE,
+            y = 5 * TILE_SIZE,
+            texture = 'flags',
+            width = 16,
+            height = 16,
+            frame = 6
+        }
+
+        table.insert( self.level.objects, flagPostBase )
+        self.flagPresent = true
+    end
 end

@@ -10,10 +10,11 @@
 
 GameLevel = Class{}
 
-function GameLevel:init(entities, objects, tilemap)
+function GameLevel:init(entities, objects, tilemap, flagSpot)
     self.entities = entities
     self.objects = objects
     self.tileMap = tilemap
+    self.flagSpot = flagSpot
 end
 
 --[[

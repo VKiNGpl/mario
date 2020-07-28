@@ -34,6 +34,44 @@ function GenerateQuads(atlas, tilewidth, tileheight)
     return spritesheet
 end
 
+function GenerateQuadsFlagPosts(atlas, tilewidth, tileheight)
+    local sheetWidth = 6
+    local sheetHeight = 3
+
+    local sheetCounter = 1
+    local spritesheet = {}
+
+    for y = 0, sheetHeight - 1 do
+        for x = 0, sheetWidth - 1 do
+            spritesheet[sheetCounter] =
+                love.graphics.newQuad(x * tilewidth, y * tileheight, tilewidth,
+                tileheight, atlas:getDimensions())
+            sheetCounter = sheetCounter + 1
+        end
+    end
+
+    return spritesheet
+end
+
+function GenerateQuadsFlags(atlas, tilewidth, tileheight)
+    local sheetWidth = 3
+    local sheetHeight = 4
+
+    local sheetCounter = 1
+    local spritesheet = {}
+
+    for y = 0, sheetHeight - 1 do
+        for x = 6, 8 do
+            spritesheet[sheetCounter] =
+                love.graphics.newQuad(x * tilewidth, y * tileheight, tilewidth,
+                tileheight, atlas:getDimensions())
+            sheetCounter = sheetCounter + 1
+        end
+    end
+
+    return spritesheet
+end
+
 --[[
     Divides quads we've generated via slicing our tile sheet into separate tile sets.
 ]]

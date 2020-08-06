@@ -14,7 +14,6 @@ function LevelMaker.generate(width, height)
     local tiles = {}
     local entities = {}
     local objects = {}
-
     local tileID = TILE_ID_GROUND
     local flagSpot = 0
     
@@ -24,7 +23,7 @@ function LevelMaker.generate(width, height)
     local tileset = math.random(20)
     local topperset = math.random(20)
     local keyset = math.random(4)
-
+    local lastFlagSpot
     -- insert blank tables into tiles for later access
     for x = 1, height do
         table.insert(tiles, {})
@@ -33,7 +32,7 @@ function LevelMaker.generate(width, height)
     -- column by column generation instead of row; sometimes better for platformers
     for x = 1, width do
         local tileID = TILE_ID_EMPTY
-        
+        lastFlagSpot = flagSpot
         -- lay out the empty space
         for y = 1, 6 do
             table.insert(tiles[y],
@@ -227,13 +226,17 @@ function LevelMaker.generate(width, height)
                 lockGenerated = true
             end
             if blockHeight == 4 and not hasBlock then
-                flagSpot = x
+                flagSpot = x - 1
             end
         end
     end
 
+    if flagSpot == 99 then
+        flagSpot = lastFlagSpot
+    end
+
     local map = TileMap(width, height)
     map.tiles = tiles
-    
+
     return GameLevel(entities, objects, map, flagSpot)
 end

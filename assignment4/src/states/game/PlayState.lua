@@ -7,10 +7,14 @@
 
 PlayState = Class{__includes = BaseState}
 
+local levelWidth = 100
+
 function PlayState:init()
     self.camX = 0
     self.camY = 0
-    self.level = LevelMaker.generate(100, 10)
+    self.currentLevel = 1
+    self.levelWidth = levelWidth
+    self.level = LevelMaker.generate(self.levelWidth + (self.currentLevel - 1) * 10, 10)
     self.tileMap = self.level.tileMap
     self.background = math.random(3)
     self.backgroundX = 0
@@ -36,6 +40,11 @@ function PlayState:init()
     self:spawnEnemies()
 
     self.player:changeState('falling')
+end
+
+function PlayState:enter(params)
+    self.currentLevel = params.level
+    self.player.score = params.score or 0
 end
 
 function PlayState:update(dt)
@@ -82,6 +91,13 @@ function PlayState:render()
     love.graphics.print(tostring(self.player.score), 5, 5)
     love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
     love.graphics.print(tostring(self.player.score), 4, 4)
+
+    -- render level
+    love.graphics.setFont(gFonts['medium'])
+    love.graphics.setColor(0.0, 0.0, 0.0, 1.0)
+    love.graphics.print('LEVEL ' .. self.currentLevel, 190, 5)
+    love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
+    love.graphics.print('LEVEL ' .. self.currentLevel, 190, 4)
 end
 
 function PlayState:updateCamera()
@@ -158,6 +174,8 @@ function PlayState:findGround()
 end
 
 function PlayState:spawnFlag()
+    
+
     if not self.flagPresent then
         for o = 1, #self.level.objects do
             if self.level.objects[o].isLock == true then
@@ -165,16 +183,69 @@ function PlayState:spawnFlag()
             end
         end
 
+        local flagType = math.random( 15, 18 )
+
         flagPostBase = GameObject {
             x = self.level.flagSpot * TILE_SIZE,
             y = 5 * TILE_SIZE,
+            texture = 'flag-posts',
+            width = 16,
+            height = 16,
+            frame = flagType,
+            consumable = true,
+            onConsume = function()
+                levelWidth = levelWidth + 10
+                gStateMachine:change('play', {
+                    level = self.currentLevel + 1,
+                    score = self.player.score,
+                })
+            end
+        }
+        flagPostMast = GameObject {
+            x = self.level.flagSpot * TILE_SIZE,
+            y = 4 * TILE_SIZE,
+            texture = 'flag-posts',
+            width = 16,
+            height = 16,
+            frame = flagType - 6,
+            consumable = true,
+            onConsume = function()
+                levelWidth = levelWidth + 10
+                gStateMachine:change('play', {
+                    level = self.currentLevel + 1,
+                    score = self.player.score,
+                })
+            end
+        }
+        flagPostTip = GameObject {
+            x = self.level.flagSpot * TILE_SIZE,
+            y = 3 * TILE_SIZE,
+            texture = 'flag-posts',
+            width = 16,
+            height = 16,
+            frame = flagType - 12,
+            consumable = true,
+            onConsume = function()
+                levelWidth = levelWidth + 10
+                gStateMachine:change('play', {
+                    level = self.currentLevel + 1,
+                    score = self.player.score,
+                })
+            end
+        }
+        flagPostFlag = GameObject {
+            x = self.level.flagSpot * TILE_SIZE + (TILE_SIZE/2 - 2),
+            y = 3 * TILE_SIZE + (TILE_SIZE/4 + 2),
             texture = 'flags',
             width = 16,
             height = 16,
-            frame = 6
+            frame = flagType - 14 
         }
 
         table.insert( self.level.objects, flagPostBase )
+        table.insert( self.level.objects, flagPostMast )
+        table.insert( self.level.objects, flagPostTip )
+        table.insert( self.level.objects, flagPostFlag )
         self.flagPresent = true
     end
 end
